@@ -1,0 +1,90 @@
+# =============================================================
+# Tree Health Classification — PILOT Configuration
+# =============================================================
+# Honest note: none of Module 2's recommended public datasets (PlantVillage,
+# PlantDoc, Plant Pathology 2021) contain Mango or Neem specifically -- they
+# cover apple/tomato/corn/grape/potato/peach/strawberry. Health *patterns*
+# (blight, rot, leaf-spotting, discoloration) generalize across species
+# reasonably well for a pilot correctness check, but this pilot is NOT
+# species-matched to Mango/Neem, and that should stay explicit rather than
+# implied. Revisit with Mango/Neem-specific disease data before treating
+# Module 2's accuracy numbers as representative for those two species.
+#
+# Differences from the full config.yaml:
+#   - class_map: only Healthy + Diseased (Nutrient_Deficient / Pest_Affected
+#     dropped for the pilot -- they had no real public data mapped anyway,
+#     see the full config.yaml's own comments on that gap).
+#   - epochs/patience reduced for a small pilot dataset.
+#
+# Usage:
+#   python data/prepare_dataset.py --config configs/config.pilot.yaml
+#   python data/make_splits.py --config configs/config.pilot.yaml
+#   python training/train.py --config configs/config.pilot.yaml
+# =============================================================
+
+project:
+  name: "tree_health_classifier_pilot"
+  seed: 42
+  device: "cuda"
+
+paths:
+  raw_data_dir: "data/raw"
+  processed_data_dir: "data/processed_pilot"
+  splits_dir: "data/splits_pilot"
+  output_dir: "outputs_pilot"
+  checkpoint_dir: "outputs_pilot/checkpoints"
+  log_dir: "outputs_pilot/logs"
+  plots_dir: "outputs_pilot/plots"
+  tb_log_dir: "outputs_pilot/tb_logs"
+
+# -------------------------------------------------------------
+# PILOT taxonomy: Healthy + Diseased only. Populate a handful of these
+# source folders (you do not need all of them -- pick whichever is easiest
+# to download, e.g. just PlantVillage's Apple___healthy + Apple___Apple_scab):
+#   data/raw/plantvillage/Apple___healthy/*.jpg
+#   data/raw/plantvillage/Apple___Apple_scab/*.jpg
+#   (or any other healthy/diseased pair from the sources listed in the
+#    full config.yaml's class_map)
+# -------------------------------------------------------------
+class_map:
+  Healthy:
+    - "plantvillage/Apple___healthy"
+    - "plantvillage/Tomato___healthy"
+    - "plantdoc/healthy"
+
+  Diseased:
+    - "plantvillage/Apple___Apple_scab"
+    - "plantvillage/Apple___Black_rot"
+    - "plantvillage/Tomato___Early_blight"
+    - "plantdoc/leaf_spot"
+    - "plantdoc/blight"
+
+data:
+  image_size: 300
+  num_workers: 4
+  train_split: 0.70
+  val_split: 0.15
+  test_split: 0.15
+  min_images_per_class: 15
+
+model:
+  backbone: "efficientnet_b3"
+  pretrained: true
+  drop_rate: 0.3
+  drop_path_rate: 0.2
+
+train:
+  epochs: 20
+  batch_size: 16
+  lr: 3.0e-4
+  weight_decay: 1.0e-4
+  label_smoothing: 0.1
+  warmup_epochs: 2
+  early_stopping_patience: 5
+  early_stopping_metric: "val_macro_f1"
+  use_amp: true
+  use_weighted_sampler: true
+  grad_clip_norm: 5.0
+
+inference:
+  confidence_threshold: 0.55

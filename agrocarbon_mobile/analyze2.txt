@@ -1,0 +1,21 @@
+Analyzing agrocarbon_mobile...                                  
+
+   info - Constructors for public widgets should have a named 'key' parameter - lib\main.dart:8:7 - use_key_in_widget_constructors
+   info - Constructors for public widgets should have a named 'key' parameter - lib\screens\loading_screen.dart:12:3 - use_key_in_widget_constructors
+   info - Constructors in '@immutable' classes should be declared as 'const' - lib\screens\loading_screen.dart:12:3 - prefer_const_constructors_in_immutables
+   info - Invalid use of a private type in a public API - lib\screens\loading_screen.dart:20:3 - library_private_types_in_public_api
+   info - Constructors for public widgets should have a named 'key' parameter - lib\screens\login_screen.dart:6:7 - use_key_in_widget_constructors
+   info - Invalid use of a private type in a public API - lib\screens\login_screen.dart:8:3 - library_private_types_in_public_api
+   info - Constructors for public widgets should have a named 'key' parameter - lib\screens\results_screen.dart:8:3 - use_key_in_widget_constructors
+   info - Constructors in '@immutable' classes should be declared as 'const' - lib\screens\results_screen.dart:8:3 - prefer_const_constructors_in_immutables
+   info - Constructors for public widgets should have a named 'key' parameter - lib\screens\signup_screen.dart:5:7 - use_key_in_widget_constructors
+   info - Invalid use of a private type in a public API - lib\screens\signup_screen.dart:7:3 - library_private_types_in_public_api
+   info - 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre - lib\screens\signup_screen.dart:86:17 - deprecated_member_use
+   info - Constructors for public widgets should have a named 'key' parameter - lib\screens\upload_screen.dart:6:7 - use_key_in_widget_constructors
+   info - Invalid use of a private type in a public API - lib\screens\upload_screen.dart:8:3 - library_private_types_in_public_api
+  error - Undefined class 'FilePickerResult' - lib\screens\upload_screen.dart:19:5 - undefined_class
+  error - The getter 'platform' isn't defined for the type 'FilePicker' - lib\screens\upload_screen.dart:19:49 - undefined_getter
+   info - Don't invoke 'print' in production code - lib\screens\upload_screen.dart:25:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\api_service.dart:69:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\api_service.dart:70:5 - avoid_print
+

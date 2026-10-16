@@ -1,0 +1,53 @@
+# =============================================================
+# Unified Deep Feature & Biomass Estimation Configuration
+# Combines outputs of Modules 1-4 to predict biomass (Module 5 & 6)
+# =============================================================
+
+project:
+  name: "biomass_estimation"
+  seed: 42
+  device: "cuda"
+
+paths:
+  raw_data_dir: "data/raw"
+  splits_dir: "data/splits"
+  output_dir: "outputs"
+  checkpoint_dir: "outputs/checkpoints"
+  log_dir: "outputs/logs"
+  plots_dir: "outputs/plots"
+
+data:
+  image_size: 224             # Standard ConvNeXt input size
+  num_workers: 4
+  train_split: 0.70
+  val_split: 0.15
+  test_split: 0.15
+
+features:
+  use_handcrafted: true
+  num_handcrafted: 22         # Handcrafted geometric/texture feature count
+  num_species: 20             # Max supported tree species
+  species_embedding_dim: 16
+  health_embedding_dim: 8
+  deep_feature_dim: 768       # Output of ConvNeXt-Tiny classifier stripped
+
+model:
+  backbone: "convnext_tiny"
+  pretrained: true
+  fusion_dim: 512
+  dropout: 0.3
+  
+train:
+  epochs: 100
+  batch_size: 32
+  lr: 3.0e-4
+  weight_decay: 0.05
+  warmup_epochs: 5
+  early_stopping_patience: 15
+  early_stopping_metric: "val_mae"
+  use_amp: true
+  grad_clip_norm: 1.0
+
+loss:
+  type: "huber"               # 'huber', 'mse', 'mae'
+  huber_delta: 2.0

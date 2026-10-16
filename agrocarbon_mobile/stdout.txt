@@ -1,0 +1,59 @@
+error - The getter 'predictionTimestamp' isn't defined for the type 'CarbonAnalysisResponse' - lib\screens\history_screen.dart:132:32 - undefined_getter
+error - The getter 'predictionTimestamp' isn't defined for the type 'CarbonAnalysisResponse' - lib\screens\history_screen.dart:133:40 - undefined_getter
+error - The getter 'fullTreeImageUrl' isn't defined for the type 'CarbonAnalysisResponse' - lib\screens\history_screen.dart:145:29 - undefined_getter
+error - The getter 'fullTreeImageUrl' isn't defined for the type 'CarbonAnalysisResponse' - lib\screens\history_screen.dart:149:30 - undefined_getter
+error - Local variable 'http' can't be referenced before it is declared - lib\services\api_service.dart:15:26 - referenced_before_declaration
+error - Undefined class 'on' - lib\services\api_service.dart:24:7 - undefined_class
+error - Expected to find ';' - lib\services\api_service.dart:24:10 - expected_token
+error - A dot shorthand can't be used where there is no context type - lib\services\api_service.dart:24:14 - dot_shorthand_missing_context
+error - Expected to find ';' - lib\services\api_service.dart:24:15 - expected_token
+error - 'catch' can't be used as an identifier because it's a keyword - lib\services\api_service.dart:24:31 - expected_identifier_but_got_keyword
+error - The method 'catch' isn't defined for the type 'ApiService' - lib\services\api_service.dart:24:31 - undefined_method
+error - Undefined name '_' - lib\services\api_service.dart:24:38 - undefined_identifier
+error - Expected to find ';' - lib\services\api_service.dart:24:39 - expected_token
+error - 'catch' can't be used as an identifier because it's a keyword - lib\services\api_service.dart:26:7 - expected_identifier_but_got_keyword
+error - The method 'catch' isn't defined for the type 'ApiService' - lib\services\api_service.dart:26:7 - undefined_method
+error - Undefined name 'e' - lib\services\api_service.dart:26:14 - undefined_identifier
+error - Expected to find ';' - lib\services\api_service.dart:26:15 - expected_token
+error - Undefined name 'e' - lib\services\api_service.dart:27:11 - undefined_identifier
+error - A rethrow must be inside of a catch clause - lib\services\api_service.dart:27:27 - rethrow_outside_catch
+error - Local variable 'http' can't be referenced before it is declared - lib\services\api_service.dart:35:26 - referenced_before_declaration
+error - Undefined class 'on' - lib\services\api_service.dart:50:7 - undefined_class
+error - Expected to find ';' - lib\services\api_service.dart:50:10 - expected_token
+error - A dot shorthand can't be used where there is no context type - lib\services\api_service.dart:50:14 - dot_shorthand_missing_context
+error - Expected to find ';' - lib\services\api_service.dart:50:15 - expected_token
+error - 'catch' can't be used as an identifier because it's a keyword - lib\services\api_service.dart:50:31 - expected_identifier_but_got_keyword
+error - The method 'catch' isn't defined for the type 'ApiService' - lib\services\api_service.dart:50:31 - undefined_method
+error - Undefined name '_' - lib\services\api_service.dart:50:38 - undefined_identifier
+error - Expected to find ';' - lib\services\api_service.dart:50:39 - expected_token
+error - 'catch' can't be used as an identifier because it's a keyword - lib\services\api_service.dart:52:7 - expected_identifier_but_got_keyword
+error - The method 'catch' isn't defined for the type 'ApiService' - lib\services\api_service.dart:52:7 - undefined_method
+error - Undefined name 'e' - lib\services\api_service.dart:52:14 - undefined_identifier
+error - Expected to find ';' - lib\services\api_service.dart:52:15 - expected_token
+error - Undefined name 'e' - lib\services\api_service.dart:53:11 - undefined_identifier
+error - A rethrow must be inside of a catch clause - lib\services\api_service.dart:53:27 - rethrow_outside_catch
+error - Local variable 'http' can't be referenced before it is declared - lib\services\api_service.dart:72:19 - referenced_before_declaration
+error - Local variable 'http' can't be referenced before it is declared - lib\services\api_service.dart:74:23 - referenced_before_declaration
+error - Local variable 'http' can't be referenced before it is declared - lib\services\api_service.dart:80:23 - referenced_before_declaration
+error - Undefined class 'on' - lib\services\api_service.dart:94:7 - undefined_class
+error - Expected to find ';' - lib\services\api_service.dart:94:10 - expected_token
+error - A dot shorthand can't be used where there is no context type - lib\services\api_service.dart:94:14 - dot_shorthand_missing_context
+error - Expected to find ';' - lib\services\api_service.dart:94:15 - expected_token
+error - 'catch' can't be used as an identifier because it's a keyword - lib\services\api_service.dart:94:31 - expected_identifier_but_got_keyword
+error - The method 'catch' isn't defined for the type 'ApiService' - lib\services\api_service.dart:94:31 - undefined_method
+error - Undefined name '_' - lib\services\api_service.dart:94:38 - undefined_identifier
+error - Expected to find ';' - lib\services\api_service.dart:94:39 - expected_token
+error - 'catch' can't be used as an identifier because it's a keyword - lib\services\api_service.dart:96:7 - expected_identifier_but_got_keyword
+error - The method 'catch' isn't defined for the type 'ApiService' - lib\services\api_service.dart:96:7 - undefined_method
+error - Undefined name 'e' - lib\services\api_service.dart:96:14 - undefined_identifier
+error - Expected to find ';' - lib\services\api_service.dart:96:15 - expected_token
+error - Undefined name 'e' - lib\services\api_service.dart:97:11 - undefined_identifier
+error - A rethrow must be inside of a catch clause - lib\services\api_service.dart:97:27 - rethrow_outside_catch
+error - Target of URI doesn't exist: 'upload_screen.dart' - lib\widgets\app_drawer.dart:3:8 - uri_does_not_exist
+error - Target of URI doesn't exist: 'history_screen.dart' - lib\widgets\app_drawer.dart:4:8 - uri_does_not_exist
+error - Target of URI doesn't exist: 'profile_screen.dart' - lib\widgets\app_drawer.dart:5:8 - uri_does_not_exist
+error - Target of URI doesn't exist: 'login_screen.dart' - lib\widgets\app_drawer.dart:6:8 - uri_does_not_exist
+error - The method 'LoginScreen' isn't defined for the type 'AppDrawer' - lib\widgets\app_drawer.dart:26:41 - undefined_method
+error - The method 'UploadScreen' isn't defined for the type 'AppDrawer' - lib\widgets\app_drawer.dart:68:99 - undefined_method
+error - The name 'HistoryScreen' isn't a class - lib\widgets\app_drawer.dart:73:106 - creation_with_non_type
+error - The name 'ProfileScreen' isn't a class - lib\widgets\app_drawer.dart:78:106 - creation_with_non_type

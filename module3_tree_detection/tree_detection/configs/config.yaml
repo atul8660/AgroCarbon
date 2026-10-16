@@ -1,0 +1,99 @@
+# =============================================================
+# Whole Tree Detection — Central Configuration
+# =============================================================
+
+project:
+  name: "tree_detection"
+  seed: 42
+  device: "cuda"        # "cuda", "cpu", or a specific index like "0"
+
+paths:
+  raw_data_dir: "data/raw"                 # downloaded/extracted raw datasets
+  processed_data_dir: "data/processed"     # unified YOLO-format images/ + labels/
+  splits_dir: "data/splits"                # train/val/test image list + dataset.yaml
+  output_dir: "outputs"
+  checkpoint_dir: "outputs/checkpoints"
+  log_dir: "outputs/logs"
+  plots_dir: "outputs/plots"
+  crops_dir: "outputs/crops"               # Module-4-ready cropped tree images
+
+# -------------------------------------------------------------
+# Unified label taxonomy: single-class detector.
+# All source datasets (Auto Arborist, Open Images "Tree", NEON) are
+# collapsed into one class so label-schema differences across sources
+# don't fragment the detector.
+# -------------------------------------------------------------
+classes:
+  - "tree"
+
+# -------------------------------------------------------------
+# Raw source registry: where each dataset's raw annotations live and
+# which converter prepare_dataset.py should apply. Extend this list to
+# add more sources without touching the converter's core logic.
+# -------------------------------------------------------------
+sources:
+  auto_arborist:
+    raw_subdir: "auto_arborist"
+    format: "auto_arborist_json"      # per-tree JSON w/ normalized xmin/xmax/ymin/ymax
+  open_images_tree:
+    raw_subdir: "open_images_tree"
+    format: "open_images_csv"         # OIDv7 CSV: ImageID,XMin,XMax,YMin,YMax (normalized)
+  neon_tree_eval:
+    raw_subdir: "neon_tree_eval"
+    format: "pascal_voc_xml"          # NEON annotations ship as Pascal-VOC-style XML
+
+data:
+  image_size: 960            # YOLOv11 training/inference resolution (trees need context)
+  num_workers: 8
+  train_split: 0.70
+  val_split: 0.15
+  test_split: 0.15
+  min_box_size_px: 20        # discard boxes smaller than this (likely noise/background tree)
+  max_boxes_per_image: 50    # sanity cap against malformed annotation files
+
+model:
+  architecture: "yolo11m"          # yolo11n/s/m/l/x — swap for speed/accuracy trade-off
+  pretrained_weights: "yolo11m.pt" # COCO-pretrained checkpoint used for transfer learning
+  input_size: 960
+
+train:
+  epochs: 100
+  batch_size: 16
+  cache_data: "ram"          # <--- Automatically cache dataset in RAM for faster Colab training
+  lr0: 0.01                  # initial LR (SGD) — ultralytics default schedule
+  lrf: 0.01                  # final LR fraction (cosine schedule target)
+  weight_decay: 0.0005
+  warmup_epochs: 3
+  patience: 15                # early stopping patience (epochs w/o mAP50-95 improvement)
+  use_amp: true
+  optimizer: "auto"           # ultralytics auto-selects SGD/AdamW based on dataset size
+  augmentation:
+    hsv_h: 0.015
+    hsv_s: 0.7
+    hsv_v: 0.4
+    degrees: 10.0
+    translate: 0.1
+    scale: 0.5
+    shear: 2.0
+    flipud: 0.1
+    fliplr: 0.5
+    mosaic: 1.0
+    mixup: 0.1
+
+evaluation:
+  conf_threshold: 0.25
+  iou_threshold: 0.5
+
+inference:
+  min_confidence: 0.35        # strict baseline to ensure only real trees are passed to Module 4
+  crop_padding_ratio: 0.15    # padding added around bbox before cropping, each side
+  min_crop_resolution: 640    # minimum long-edge px for the Module-4 crop; upsampled if smaller
+
+# -------------------------------------------------------------
+# Primary-tree selection rule (see README section 6).
+# score = area_weight * normalized_bbox_area
+#       + center_weight * (1 - normalized_distance_from_image_center)
+# -------------------------------------------------------------
+selection:
+  area_weight: 0.7
+  center_weight: 0.3

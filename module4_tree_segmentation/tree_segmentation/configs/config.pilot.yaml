@@ -1,0 +1,110 @@
+# =============================================================
+# Tree Segmentation — PILOT Configuration
+# =============================================================
+# Module 4 is also species-agnostic (background/canopy/trunk classes only),
+# so this pilot is about data volume, not Mango/Neem specifically.
+#
+# For the pilot, only populate:
+#   data/raw/treeseg_roboflow/  (161 images, ready-to-use COCO polygons,
+#   no license friction beyond a free Roboflow account -- see README)
+# You do NOT need urban_street_tree/, open_images_tree_seg/, or
+# neon_pseudo_labeled/ -- prepare_dataset.py already skips missing source
+# dirs with a warning, so leaving them empty is safe for the pilot.
+#
+# Usage:
+#   python data/prepare_dataset.py --config configs/config.pilot.yaml
+#   python data/make_splits.py --config configs/config.pilot.yaml
+#   python training/train.py --config configs/config.pilot.yaml
+# =============================================================
+
+project:
+  name: "tree_segmentation_pilot"
+  seed: 42
+  device: "cuda"
+
+paths:
+  raw_data_dir: "data/raw"
+  processed_data_dir: "data/processed_pilot"
+  splits_dir: "data/splits_pilot"
+  output_dir: "outputs_pilot"
+  checkpoint_dir: "outputs_pilot/checkpoints"
+  log_dir: "outputs_pilot/logs"
+  plots_dir: "outputs_pilot/plots"
+  tb_log_dir: "outputs_pilot/tb_logs"
+  results_dir: "outputs_pilot/results"
+
+classes:
+  background: 0
+  canopy: 1
+
+# Only treeseg_roboflow needs a populated raw_subdir for the pilot.
+sources:
+  treeseg_roboflow:
+    raw_subdir: "treeseg_roboflow"
+    format: "coco_polygon"
+    provides_parts: false
+  urban_street_tree:
+    raw_subdir: "urban_street_tree"
+    format: "polygon_json"
+    provides_parts: true
+  open_images_tree_seg:
+    raw_subdir: "open_images_tree_seg"
+    format: "oid_mask_png"
+    provides_parts: false
+  neon_pseudo_labeled:
+    raw_subdir: "neon_pseudo_labeled"
+    format: "pseudo_mask_png"
+    provides_parts: false
+
+data:
+  image_size: 512              # smaller than full config's 640 -- faster pilot training
+  num_workers: 4
+  train_split: 0.70
+  val_split: 0.15
+  test_split: 0.15
+  min_mask_area_px: 400
+  min_mask_coverage_ratio: 0.02
+
+model:
+  segformer:
+    encoder: "nvidia/mit-b0"    # smaller than full config's mit-b5 -- much faster pilot training
+    pretrained_checkpoint: "nvidia/segformer-b0-finetuned-ade-512-512"
+    num_classes: 3
+  sam2:
+    enabled_for_pseudo_labeling: false   # skip for pilot -- extra setup not needed to prove the pipeline
+    enabled_for_inference_fallback: false
+    checkpoint: "checkpoints/sam2.1_hiera_large.pt"
+    model_config: "sam2.1_hiera_l.yaml"
+    fallback_quality_threshold: 0.55
+
+train:
+  epochs: 30                    # reduced from 80
+  batch_size: 4                 # reduced from 8 -- pilot dataset is small (161 images max)
+  lr: 6.0e-5
+  weight_decay: 0.01
+  warmup_epochs: 2
+  early_stopping_patience: 6    # reduced from 10
+  early_stopping_metric: "val_mean_iou"
+  use_amp: true
+  grad_clip_norm: 1.0
+  class_weights: [0.3, 1.0, 2.0]
+
+postprocessing:
+  morph_kernel_size: 5
+  small_region_min_area_px: 150
+  boundary_smoothing_epsilon_ratio: 0.002
+  hole_fill: true
+
+quality:
+  min_coverage_ratio: 0.05
+  max_coverage_ratio: 0.995
+  min_quality_score: 0.4
+  reject_on_disconnected: true
+  disconnection_min_largest_component_ratio: 0.6
+
+evaluation:
+  iou_threshold_for_match: 0.5
+  boundary_iou_dilation_px: 2
+
+inference:
+  min_confidence: 0.5

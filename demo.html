@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgroCarbon AI — Live Demo</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #0f172a; color: #e2e8f0;
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; padding: 24px;
+  }
+  h1 { font-size: 2rem; margin-bottom: 4px; color: #34d399; }
+  .subtitle { color: #94a3b8; margin-bottom: 24px; font-size: 0.95rem; }
+  .card {
+    background: #1e293b; border-radius: 16px; padding: 32px;
+    max-width: 620px; width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,.4);
+  }
+  .upload-row { display: flex; gap: 16px; margin-bottom: 20px; }
+  .upload-box {
+    flex: 1; border: 2px dashed #334155; border-radius: 12px;
+    padding: 20px 12px; text-align: center; cursor: pointer;
+    transition: border-color .2s;
+  }
+  .upload-box:hover { border-color: #34d399; }
+  .upload-box.has-file { border-color: #34d399; background: #1a3a2a; }
+  .upload-box label { display: block; cursor: pointer; }
+  .upload-box input { display: none; }
+  .upload-box .icon { font-size: 2rem; margin-bottom: 6px; }
+  .upload-box .name { font-size: .8rem; color: #34d399; margin-top: 6px; word-break: break-all; }
+  .upload-box .label-text { font-weight: 600; font-size: .95rem; }
+  .upload-box .hint { font-size: .75rem; color: #64748b; margin-top: 4px; }
+  button#analyzeBtn {
+    width: 100%; padding: 14px; border: none; border-radius: 10px;
+    font-size: 1.1rem; font-weight: 700; cursor: pointer;
+    background: linear-gradient(135deg, #059669, #34d399);
+    color: #0f172a; transition: opacity .2s;
+  }
+  button#analyzeBtn:disabled { opacity: .4; cursor: not-allowed; }
+  #status {
+    text-align: center; margin-top: 16px; font-size: .9rem; color: #94a3b8;
+  }
+  #status.error { color: #f87171; }
+  /* Results */
+  #results {
+    display: none; margin-top: 24px; max-width: 620px; width: 100%;
+  }
+  #results.show { display: block; }
+  .result-card {
+    background: #1e293b; border-radius: 16px; padding: 28px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.4);
+  }
+  .result-title { font-size: 1.2rem; font-weight: 700; color: #34d399; margin-bottom: 16px; text-align: center; }
+  .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .metric {
+    background: #0f172a; border-radius: 10px; padding: 14px;
+    text-align: center;
+  }
+  .metric .val { font-size: 1.4rem; font-weight: 700; color: #f1f5f9; }
+  .metric .lbl { font-size: .75rem; color: #64748b; margin-top: 4px; text-transform: uppercase; letter-spacing: .5px; }
+  .hero-metric {
+    background: linear-gradient(135deg, #065f46, #059669);
+    border-radius: 14px; padding: 24px; text-align: center;
+  }
+  .hero-metric .val { font-size: 2.8rem; font-weight: 800; color: #fff; }
+  .hero-metric .lbl { font-size: .9rem; color: #a7f3d0; margin-top: 6px; }
+  .conf-bar { margin-top: 16px; text-align: center; }
+  .conf-bar span { font-size: .8rem; color: #64748b; }
+</style>
+</head>
+<body>
+
+<h1>🌳 AgroCarbon AI</h1>
+<p class="subtitle">Tree Carbon Assessment — Live Pipeline Demo</p>
+
+<div class="card">
+  <div class="upload-row">
+    <div class="upload-box" id="box1">
+      <label>
+        <div class="icon">🌲</div>
+        <div class="label-text">Full Tree Photo</div>
+        <div class="hint">Wide shot of the whole tree</div>
+        <input type="file" id="fullTree" accept="image/*" />
+        <div class="name" id="name1"></div>
+      </label>
+    </div>
+    <div class="upload-box" id="box2">
+      <label>
+        <div class="icon">🍃</div>
+        <div class="label-text">Close-up / Leaf Photo</div>
+        <div class="hint">Leaves or bark close-up</div>
+        <input type="file" id="closeup" accept="image/*" />
+        <div class="name" id="name2"></div>
+      </label>
+    </div>
+  </div>
+  <button id="analyzeBtn" disabled>🔬 Analyze Tree</button>
+  <div id="status"></div>
+</div>
+
+<div id="results">
+  <div class="result-card">
+    <div class="result-title">🌿 Carbon Assessment Report</div>
+    <div class="metrics">
+      <div class="metric"><div class="val" id="rSpecies">—</div><div class="lbl">Species</div></div>
+      <div class="metric"><div class="val" id="rHealth">—</div><div class="lbl">Health</div></div>
+      <div class="metric"><div class="val" id="rBiomass">—</div><div class="lbl">Biomass (kg)</div></div>
+      <div class="metric"><div class="val" id="rCarbon">—</div><div class="lbl">Carbon Stored (kg)</div></div>
+      <div class="metric"><div class="val" id="rCO2">—</div><div class="lbl">CO₂ Equivalent (kg)</div></div>
+      <div class="metric"><div class="val" id="rConf">—</div><div class="lbl">Confidence</div></div>
+    </div>
+    <div class="hero-metric">
+      <div class="lbl">Estimated Carbon Credit Value</div>
+      <div class="val" id="rCredit">—</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'http://127.0.0.1:8000/api/v1';
+const DEMO_EMAIL = 'demo@agrocarbon.ai';
+const DEMO_PASS = 'Demo@2024!';
+let TOKEN = null;
+
+const $fullTree = document.getElementById('fullTree');
+const $closeup = document.getElementById('closeup');
+const $btn = document.getElementById('analyzeBtn');
+const $status = document.getElementById('status');
+
+// File selection UI
+$fullTree.addEventListener('change', () => {
+  document.getElementById('name1').textContent = $fullTree.files[0]?.name || '';
+  document.getElementById('box1').classList.toggle('has-file', !!$fullTree.files.length);
+  checkReady();
+});
+$closeup.addEventListener('change', () => {
+  document.getElementById('name2').textContent = $closeup.files[0]?.name || '';
+  document.getElementById('box2').classList.toggle('has-file', !!$closeup.files.length);
+  checkReady();
+});
+function checkReady() {
+  $btn.disabled = !($fullTree.files.length && $closeup.files.length);
+}
+
+// Silent login
+async function ensureToken() {
+  if (TOKEN) return TOKEN;
+  $status.textContent = 'Authenticating…';
+  $status.className = '';
+  const form = new URLSearchParams();
+  form.append('username', DEMO_EMAIL);
+  form.append('password', DEMO_PASS);
+  const resp = await fetch(API + '/auth/login', { method: 'POST', body: form });
+  if (!resp.ok) {
+    // Try registering first if user doesn't exist
+    const regResp = await fetch(API + '/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ full_name: 'Demo User', email: DEMO_EMAIL, password: DEMO_PASS, role: 'Farmer' })
+    });
+    // Now login again
+    const resp2 = await fetch(API + '/auth/login', { method: 'POST', body: form });
+    if (!resp2.ok) throw new Error('Login failed');
+    const data = await resp2.json();
+    TOKEN = data.access_token;
+    return TOKEN;
+  }
+  const data = await resp.json();
+  TOKEN = data.access_token;
+  return TOKEN;
+}
+
+// Analyze
+$btn.addEventListener('click', async () => {
+  $btn.disabled = true;
+  $status.className = '';
+  document.getElementById('results').classList.remove('show');
+
+  try {
+    const token = await ensureToken();
+    $status.textContent = '🔬 Running 6-module AI pipeline… (this takes 15-30 seconds)';
+
+    const fd = new FormData();
+    fd.append('full_tree_image', $fullTree.files[0]);
+    fd.append('closeup_image', $closeup.files[0]);
+
+    const resp = await fetch(API + '/analyze', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token },
+      body: fd
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err.detail || 'Server error ' + resp.status);
+    }
+
+    const r = await resp.json();
+    document.getElementById('rSpecies').textContent = r.species || '—';
+    document.getElementById('rHealth').textContent = r.health || '—';
+    document.getElementById('rBiomass').textContent = (r.predicted_biomass_kg ?? 0).toFixed(2);
+    document.getElementById('rCarbon').textContent = (r.carbon_stored_kg ?? 0).toFixed(2);
+    document.getElementById('rCO2').textContent = (r.co2_equivalent_kg ?? 0).toFixed(2);
+    document.getElementById('rConf').textContent = ((r.overall_confidence ?? 0) * 100).toFixed(1) + '%';
+    document.getElementById('rCredit').textContent = '₹ ' + (r.estimated_carbon_credit ?? 0).toFixed(2);
+
+    $status.textContent = '✅ Analysis complete!';
+    document.getElementById('results').classList.add('show');
+  } catch (e) {
+    $status.textContent = '❌ ' + e.message;
+    $status.className = 'error';
+  } finally {
+    $btn.disabled = false;
+    checkReady();
+  }
+});
+</script>
+</body>
+</html>

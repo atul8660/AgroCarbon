@@ -1,0 +1,77 @@
+# =============================================================
+# Tree Species Classification — PILOT Configuration
+# =============================================================
+# Scoped-down config for the 2-species pilot run (Mango + Neem), chosen
+# because both already have real source folders mapped below (leaf data
+# for both, plus bark data for Neem via BarkVisionAI).
+#
+# Differences from the full config.yaml:
+#   - class_map: only Mango + Neem (a classifier needs >=2 classes to be
+#     meaningful at all -- one species alone has nothing to discriminate
+#     against, so this is the minimum viable pilot, not "one tree").
+#   - min_images_per_class lowered to 15 (pilot datasets will be small).
+#   - epochs/patience reduced since pilot data is small and this is a
+#     pipeline-correctness check, not a push for best accuracy.
+#
+# Usage:
+#   python data/prepare_dataset.py --config configs/config.pilot.yaml
+#   python data/make_splits.py --config configs/config.pilot.yaml
+#   python training/train.py --config configs/config.pilot.yaml
+# =============================================================
+
+project:
+  name: "tree_species_classifier_pilot"
+  seed: 42
+  device: "cuda"
+
+paths:
+  raw_data_dir: "data/raw"
+  processed_data_dir: "data/processed_pilot"     # separate from full-run processed data
+  splits_dir: "data/splits_pilot"
+  output_dir: "outputs_pilot"
+  checkpoint_dir: "outputs_pilot/checkpoints"
+  log_dir: "outputs_pilot/logs"
+  plots_dir: "outputs_pilot/plots"
+
+# -------------------------------------------------------------
+# PILOT taxonomy: Mango + Neem only. Populate these source folders:
+#   data/raw/plant_leaves/Mango/*.jpg
+#   data/raw/medicinal_leaves/Mango/*.jpg      (optional, adds volume)
+#   data/raw/medicinal_leaves/Neem/*.jpg
+#   data/raw/barkvisionai/Neem/*.jpg           (optional, adds bark diversity)
+# You do NOT need to populate any other species folder for the pilot --
+# prepare_dataset.py only reads folders listed in class_map below.
+# -------------------------------------------------------------
+class_map:
+  Mango: ["plant_leaves/Mango", "medicinal_leaves/Mango"]
+  Neem:  ["medicinal_leaves/Neem", "barkvisionai/Neem"]
+
+data:
+  image_size: 300
+  num_workers: 4
+  train_split: 0.70
+  val_split: 0.15
+  test_split: 0.15
+  min_images_per_class: 15   # lowered from 20 -- pilot datasets are small
+
+model:
+  backbone: "efficientnet_b3"
+  pretrained: true
+  drop_rate: 0.3
+  drop_path_rate: 0.2
+
+train:
+  epochs: 25                  # reduced from 60 -- small pilot data converges/overfits fast
+  batch_size: 16               # reduced from 32 -- pilot dataset may be small
+  lr: 3.0e-4
+  weight_decay: 1.0e-4
+  label_smoothing: 0.1
+  warmup_epochs: 2
+  early_stopping_patience: 5   # reduced from 8
+  early_stopping_metric: "val_macro_f1"
+  use_amp: true
+  use_weighted_sampler: true
+  grad_clip_norm: 5.0
+
+inference:
+  confidence_threshold: 0.5

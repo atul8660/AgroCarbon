@@ -1,0 +1,26 @@
+# =============================================================
+# Carbon Analytics System Configuration
+# Parameterizes the Carbon Fraction, Atomic ratios, and Market Values
+# =============================================================
+
+project:
+  name: "carbon_analytics"
+  mode: "educational"
+
+constants:
+  carbon_fraction: 0.47          # IPCC Default for broadleaf/conifer
+  atomic_ratio_co2_to_c: 3.6667  # 44 / 12
+  
+market:
+  estimated_price_per_ton_co2: 1500.0  # Approx INR equivalent (~₹18/ton voluntary carbon market)
+  currency: "INR"
+
+api:
+  host: "0.0.0.0"
+  port: 8000
+  title: "Tree Carbon Assessment System API"
+
+paths:
+  reports_dir: "reports"
+  pdf_exports_dir: "reports/pdf"
+  csv_exports_dir: "reports/csv"

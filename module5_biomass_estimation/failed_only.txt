@@ -1,0 +1,76 @@
+...........................................................................................................................................................................FFFFFFFFFFFF....      [100%]
+============================================================================================== FAILURES ===============================================================================================
+________________________________________________________________________ TestEdgeCases.test_very_small_leaf[AlstoniaScholaris] ________________________________________________________________________
+test_biomass_estimator.py:200: in test_very_small_leaf
+    assert getattr(result, attr) > 0
+E   AssertionError: assert 0.0 > 0
+E    +  where 0.0 = getattr(BiomassResult(species='AlstoniaScholaris', leaf_length_cm=0.1, estimated_dbh_cm=0.19, estimated_height_m=0.19, agb_kg=0.0, carbon_kg=0.0, co2_equivalent_kg=0.0), 'agb_kg')
+______________________________________________________________________________ TestEdgeCases.test_very_small_leaf[Arjun] ______________________________________________________________________________
+test_biomass_estimator.py:200: in test_very_small_leaf
+    assert getattr(result, attr) > 0
+E   AssertionError: assert 0.0 > 0
+E    +  where 0.0 = getattr(BiomassResult(species='Arjun', leaf_length_cm=0.1, estimated_dbh_cm=0.18, estimated_height_m=0.16, agb_kg=0.0, carbon_kg=0.0, co2_equivalent_kg=0.0), 'agb_kg')
+_____________________________________________________________________________ TestEdgeCases.test_very_small_leaf[Chinar] ______________________________________________________________________________
+test_biomass_estimator.py:200: in test_very_small_leaf
+    assert getattr(result, attr) > 0
+E   AssertionError: assert 0.0 > 0
+E    +  where 0.0 = getattr(BiomassResult(species='Chinar', leaf_length_cm=0.1, estimated_dbh_cm=0.19, estimated_height_m=0.17, agb_kg=0.0, carbon_kg=0.0, co2_equivalent_kg=0.0), 'agb_kg')
+____________________________________________________________________________ TestEdgeCases.test_very_small_leaf[CurryLeaf] ____________________________________________________________________________
+test_biomass_estimator.py:200: in test_very_small_leaf
+    assert getattr(result, attr) > 0
+E   AssertionError: assert 0.0 > 0
+E    +  where 0.0 = getattr(BiomassResult(species='CurryLeaf', leaf_length_cm=0.1, estimated_dbh_cm=0.06, estimated_height_m=0.04, agb_kg=0.0, carbon_kg=0.0, co2_equivalent_kg=0.0), 'agb_kg')
+___________________________________________________________________________ TestEdgeCases.test_very_small_leaf[Eucalyptus] ____________________________________________________________________________
+test_biomass_estimator.py:200: in test_very_small_leaf
+    assert getattr(result, attr) > 0
+E   AssertionError: assert 0.0 > 0
+E    +  where 0.0 = getattr(BiomassResult(species='Eucalyptus', leaf_length_cm=0.1, estimated_dbh_cm=0.17, estimated_height_m=0.17, agb_kg=0.0, carbon_kg=0.0, co2_equivalent_kg=0.0), 'agb_kg')
+______________________________________________________________________________ TestEdgeCases.test_very_small_leaf[Guava] ______________________________________________________________________________
+test_biomass_estimator.py:200: in test_very_small_leaf
+    assert getattr(result, attr) > 0
+E   AssertionError: assert 0.0 > 0
+E    +  where 0.0 = getattr(BiomassResult(species='Guava', leaf_length_cm=0.1, estimated_dbh_cm=0.08, estimated_height_m=0.08, agb_kg=0.0, carbon_kg=0.0, co2_equivalent_kg=0.0), 'agb_kg')
+______________________________________________________________________________ TestEdgeCases.test_very_small_leaf[Jamun] ______________________________________________________________________________
+test_biomass_estimator.py:200: in test_very_small_leaf
+    assert getattr(result, attr) > 0
+E   AssertionError: assert 0.0 > 0
+E    +  where 0.0 = getattr(BiomassResult(species='Jamun', leaf_length_cm=0.1, estimated_dbh_cm=0.15, estimated_height_m=0.13, agb_kg=0.0, carbon_kg=0.0, co2_equivalent_kg=0.0), 'agb_kg')
+____________________________________________________________________________ TestEdgeCases.test_very_small_leaf[Jatropha] _____________________________________________________________________________
+test_biomass_estimator.py:200: in test_very_small_leaf
+    assert getattr(result, attr) > 0
+E   AssertionError: assert 0.0 > 0
+E    +  where 0.0 = getattr(BiomassResult(species='Jatropha', leaf_length_cm=0.1, estimated_dbh_cm=0.05, estimated_height_m=0.04, agb_kg=0.0, carbon_kg=0.0, co2_equivalent_kg=0.0), 'agb_kg')
+______________________________________________________________________________ TestEdgeCases.test_very_small_leaf[Lemon] ______________________________________________________________________________
+test_biomass_estimator.py:200: in test_very_small_leaf
+    assert getattr(result, attr) > 0
+E   AssertionError: assert 0.0 > 0
+E    +  where 0.0 = getattr(BiomassResult(species='Lemon', leaf_length_cm=0.1, estimated_dbh_cm=0.07, estimated_height_m=0.05, agb_kg=0.0, carbon_kg=0.0, co2_equivalent_kg=0.0), 'agb_kg')
+______________________________________________________________________________ TestEdgeCases.test_very_small_leaf[Mango] ______________________________________________________________________________
+test_biomass_estimator.py:200: in test_very_small_leaf
+    assert getattr(result, attr) > 0
+E   AssertionError: assert 0.0 > 0
+E    +  where 0.0 = getattr(BiomassResult(species='Mango', leaf_length_cm=0.1, estimated_dbh_cm=0.16, estimated_height_m=0.14, agb_kg=0.0, carbon_kg=0.0, co2_equivalent_kg=0.0), 'agb_kg')
+___________________________________________________________________________ TestEdgeCases.test_very_small_leaf[Pomegranate] ___________________________________________________________________________
+test_biomass_estimator.py:200: in test_very_small_leaf
+    assert getattr(result, attr) > 0
+E   AssertionError: assert 0.0 > 0
+E    +  where 0.0 = getattr(BiomassResult(species='Pomegranate', leaf_length_cm=0.1, estimated_dbh_cm=0.08, estimated_height_m=0.06, agb_kg=0.0, carbon_kg=0.0, co2_equivalent_kg=0.0), 'agb_kg')
+____________________________________________________________________________ TestEdgeCases.test_very_small_leaf[Pongamia] _____________________________________________________________________________
+test_biomass_estimator.py:200: in test_very_small_leaf
+    assert getattr(result, attr) > 0
+E   AssertionError: assert 0.0 > 0
+E    +  where 0.0 = getattr(BiomassResult(species='Pongamia', leaf_length_cm=0.1, estimated_dbh_cm=0.16, estimated_height_m=0.14, agb_kg=0.0, carbon_kg=0.0, co2_equivalent_kg=0.0), 'agb_kg')
+======================================================================================= short test summary info =======================================================================================
+FAILED test_biomass_estimator.py::TestEdgeCases::test_very_small_leaf[AlstoniaScholaris] - AssertionError: assert 0.0 > 0
+FAILED test_biomass_estimator.py::TestEdgeCases::test_very_small_leaf[Arjun] - AssertionError: assert 0.0 > 0
+FAILED test_biomass_estimator.py::TestEdgeCases::test_very_small_leaf[Chinar] - AssertionError: assert 0.0 > 0
+FAILED test_biomass_estimator.py::TestEdgeCases::test_very_small_leaf[CurryLeaf] - AssertionError: assert 0.0 > 0
+FAILED test_biomass_estimator.py::TestEdgeCases::test_very_small_leaf[Eucalyptus] - AssertionError: assert 0.0 > 0
+FAILED test_biomass_estimator.py::TestEdgeCases::test_very_small_leaf[Guava] - AssertionError: assert 0.0 > 0
+FAILED test_biomass_estimator.py::TestEdgeCases::test_very_small_leaf[Jamun] - AssertionError: assert 0.0 > 0
+FAILED test_biomass_estimator.py::TestEdgeCases::test_very_small_leaf[Jatropha] - AssertionError: assert 0.0 > 0
+FAILED test_biomass_estimator.py::TestEdgeCases::test_very_small_leaf[Lemon] - AssertionError: assert 0.0 > 0
+FAILED test_biomass_estimator.py::TestEdgeCases::test_very_small_leaf[Mango] - AssertionError: assert 0.0 > 0
+FAILED test_biomass_estimator.py::TestEdgeCases::test_very_small_leaf[Pomegranate] - AssertionError: assert 0.0 > 0
+FAILED test_biomass_estimator.py::TestEdgeCases::test_very_small_leaf[Pongamia] - AssertionError: assert 0.0 > 0
+12 failed, 175 passed in 0.58s

@@ -1,0 +1,70 @@
+# =============================================================
+# Tree Species Classification — Central Configuration
+# =============================================================
+
+project:
+  name: "tree_species_classifier"
+  seed: 42
+  device: "cuda"        # "cuda" or "cpu" — auto-fallback handled in code
+
+paths:
+  raw_data_dir: "data/raw"                # downloaded/extracted raw datasets
+  processed_data_dir: "data/processed"    # unified <species>/*.jpg structure
+  splits_dir: "data/splits"               # train.csv / val.csv / test.csv
+  output_dir: "outputs"
+  checkpoint_dir: "outputs_pilot/checkpoints"
+  log_dir: "outputs/logs"
+  plots_dir: "outputs/plots"
+
+# -------------------------------------------------------------
+# Unified species taxonomy. Maps a canonical species name to the
+# list of raw source subfolders (from the various datasets) that
+# should be merged into it. Extend this list to add more species
+# or datasets without touching any code.
+# -------------------------------------------------------------
+class_map:
+  AlstoniaScholaris: ["plant_leaves/AlstoniaScholaris"]
+  Arjun:             ["plant_leaves/Arjun", "medicinal_leaves/Arjun"]
+  Basil:             ["plant_leaves/Basil"]
+  Chinar:            ["plant_leaves/Chinar"]
+  CurryLeaf:         ["medicinal_leaves/CurryLeaf"]
+  Eucalyptus:        ["medicinal_leaves/Eucalyptus"]
+  Guava:             ["plant_leaves/Guava", "medicinal_leaves/Guava"]
+  Jamun:             ["plant_leaves/Jamun"]
+  Jatropha:          ["plant_leaves/Jatropha"]
+  Lemon:             ["plant_leaves/Lemon"]
+  Mango:             ["plant_leaves/Mango", "medicinal_leaves/Mango"]
+  Pomegranate:       ["plant_leaves/Pomegranate"]
+  Pongamia:          ["plant_leaves/Pongamia"]
+  # 13 species with real training data (99.21% accuracy)
+  # DROPPED: Neem, Peepal, Banyan, Teak, Sal, Mahogany (no data in datasets)
+
+data:
+  image_size: 224           # Match new 13-species model training transforms
+  num_workers: 8
+  train_split: 0.70
+  val_split: 0.15
+  test_split: 0.15
+  min_images_per_class: 20  # classes with fewer images are dropped/flagged
+
+model:
+  backbone: "efficientnet_b3"   # timm model name; swap to convnext_tiny / vit_small_patch16_224
+  pretrained: true
+  drop_rate: 0.3
+  drop_path_rate: 0.2
+
+train:
+  epochs: 60
+  batch_size: 32
+  lr: 3.0e-4
+  weight_decay: 1.0e-4
+  label_smoothing: 0.1
+  warmup_epochs: 3
+  early_stopping_patience: 8
+  early_stopping_metric: "val_macro_f1"
+  use_amp: true
+  use_weighted_sampler: true
+  grad_clip_norm: 5.0
+
+inference:
+  confidence_threshold: 0.5

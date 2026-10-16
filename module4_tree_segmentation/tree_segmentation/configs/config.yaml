@@ -1,0 +1,106 @@
+# =============================================================
+# Tree Segmentation — Central Configuration
+# Loaded via OmegaConf (the config engine Hydra is built on) to keep this
+# module's CLI contract (--config path.yaml) consistent with Modules 1-3,
+# while still getting structured, override-friendly hierarchical config.
+# =============================================================
+
+project:
+  name: "tree_segmentation"
+  seed: 42
+  device: "cuda"        # "cuda" or "cpu"
+
+paths:
+  raw_data_dir: "data/raw"
+  processed_data_dir: "data/processed"     # unified images/ + masks/ (PNG, 0=bg,1=canopy,2=trunk)
+  splits_dir: "data/splits"
+  output_dir: "outputs"
+  checkpoint_dir: "outputs/checkpoints"
+  log_dir: "outputs/logs"
+  plots_dir: "outputs/plots"
+  tb_log_dir: "outputs/tb_logs"
+  results_dir: "outputs/results"           # per-image TreeSegmenter output bundles
+
+# -------------------------------------------------------------
+# Class taxonomy for the 2-class semantic segmenter.
+# tree_mask.png = (class != background); canopy is the sub-mask of it.
+# -------------------------------------------------------------
+classes:
+  background: 0
+  canopy: 1
+
+# -------------------------------------------------------------
+# Raw source registry (see README section 4 for full advantages/limitations
+# and honest notes on substituted dataset names).
+# -------------------------------------------------------------
+sources:
+  treeseg_roboflow:
+    raw_subdir: "treeseg_roboflow"
+    format: "coco_polygon"          # Roboflow COCO-style polygon export, tree-only (no organ split)
+    provides_parts: false            # binary tree mask only -> whole mask assigned to "canopy" by default,
+                                      # trunk left unlabeled for these samples (loss-masked, see dataset.py)
+  urban_street_tree:
+    raw_subdir: "urban_street_tree"
+    format: "polygon_json"          # per-organ (leaf/tree/trunk/branch) polygon annotations
+    provides_parts: true             # has explicit trunk polygons -> real canopy/trunk supervision
+  open_images_tree_seg:
+    raw_subdir: "open_images_tree_seg"
+    format: "oid_mask_png"          # OIDv7 per-instance PNG masks
+    provides_parts: false
+  neon_pseudo_labeled:
+    raw_subdir: "neon_pseudo_labeled"
+    format: "pseudo_mask_png"       # produced by data/sam2_pseudo_labeling.py from NEON boxes
+    provides_parts: false
+
+data:
+  image_size: 640             # SegFormer-B5 works well at 512-640; trunk detail needs resolution
+  num_workers: 8
+  train_split: 0.70
+  val_split: 0.15
+  test_split: 0.15
+  min_mask_area_px: 400        # reject masks smaller than this (~20x20 px) as noise
+  min_mask_coverage_ratio: 0.02  # reject masks covering <2% of the image (likely failed segmentation)
+
+model:
+  segformer:
+    encoder: "nvidia/mit-b5"
+    pretrained_checkpoint: "nvidia/segformer-b5-finetuned-ade-640-640"
+    num_classes: 3               # background, canopy, trunk
+  sam2:
+    enabled_for_pseudo_labeling: true
+    enabled_for_inference_fallback: false   # off by default -- see README model-choice rationale
+    checkpoint: "checkpoints/sam2.1_hiera_large.pt"
+    model_config: "sam2.1_hiera_l.yaml"
+    fallback_quality_threshold: 0.55        # below this, TreeSegmenter may invoke SAM2 fallback
+
+train:
+  epochs: 80
+  batch_size: 8
+  lr: 6.0e-5
+  weight_decay: 0.01
+  warmup_epochs: 3
+  early_stopping_patience: 10
+  early_stopping_metric: "val_mean_iou"
+  use_amp: true
+  grad_clip_norm: 1.0
+  class_weights: [0.3, 1.0, 2.0]   # background, canopy, trunk -- trunk is a small, hard minority class
+
+postprocessing:
+  morph_kernel_size: 5
+  small_region_min_area_px: 150
+  boundary_smoothing_epsilon_ratio: 0.002   # cv2.approxPolyDP epsilon as a ratio of contour perimeter
+  hole_fill: true
+
+quality:
+  min_coverage_ratio: 0.05      # reject if tree occupies <5% of crop -- likely bad crop/segmentation
+  max_coverage_ratio: 0.995     # reject if tree occupies >99.5% -- likely mask == full image (failure mode)
+  min_quality_score: 0.4
+  reject_on_disconnected: true  # reject if largest connected component is <60% of total mask area
+  disconnection_min_largest_component_ratio: 0.6
+
+evaluation:
+  iou_threshold_for_match: 0.5
+  boundary_iou_dilation_px: 2
+
+inference:
+  min_confidence: 0.5           # per-pixel softmax confidence floor before a pixel counts as foreground

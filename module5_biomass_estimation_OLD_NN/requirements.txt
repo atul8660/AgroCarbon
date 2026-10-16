@@ -1,0 +1,14 @@
+torch>=2.0.0
+torchvision>=0.15.0
+torchaudio
+opencv-python-headless
+albumentations>=1.3.0
+numpy
+scikit-learn
+tqdm
+omegaconf
+hydra-core
+matplotlib
+seaborn
+pandas
+timm>=0.9.0
