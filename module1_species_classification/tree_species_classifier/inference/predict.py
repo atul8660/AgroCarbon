@@ -2,7 +2,7 @@
 """
 predict.py
 -----------
-Single-image inference for the 13-species EfficientNet-B3 model.
+Single-image inference for pilot and 13-species EfficientNet-B3 checkpoints.
 
 IMPORTANT: The checkpoint was trained using torchvision.models.efficientnet_b3
 (NOT timm). Using the wrong library causes silent key mismatches and wrong
@@ -67,6 +67,40 @@ class TreeSpeciesPredictor:
         self.device = torch.device(
             device if device else ("cuda" if torch.cuda.is_available() else "cpu")
         )
+        checkpoint = torch.load(checkpoint_path, map_location=self.device, weights_only=False)
+
+        if isinstance(checkpoint, dict) and {
+            "config", "label_map", "num_classes", "model_state_dict"
+        }.issubset(checkpoint):
+            from data.dataset import get_eval_transforms
+            from models.model import build_model
+
+            self.num_classes = checkpoint["num_classes"]
+            self.label_map = {
+                int(label): species
+                for label, species in checkpoint["label_map"].items()
+            }
+            self.class_names = [
+                self.label_map[index] for index in range(self.num_classes)
+            ]
+            model_config = dict(checkpoint["config"])
+            model_config["model"] = dict(model_config["model"])
+            model_config["model"]["pretrained"] = False
+            self.transforms = get_eval_transforms(
+                model_config["data"]["image_size"]
+            )
+            self.model = build_model(model_config, self.num_classes)
+            self.model.load_state_dict(checkpoint["model_state_dict"], strict=True)
+            self.model.to(self.device)
+            self.model.eval()
+            logger.info(
+                f"Loaded pilot EfficientNet-B3 with {self.num_classes} classes "
+                f"on {self.device} (strict=True, all keys matched)"
+            )
+            self._pilot_model = True
+            return
+
+        self._pilot_model = False
         self.num_classes = NUM_CLASSES
         self.class_names = CLASS_NAMES
         self.label_map = {i: name for i, name in enumerate(CLASS_NAMES)}
@@ -76,8 +110,6 @@ class TreeSpeciesPredictor:
         self.model = _build_torchvision_model(self.num_classes)
 
         # Load checkpoint — MUST be strict=True to catch mismatches
-        checkpoint = torch.load(checkpoint_path, map_location=self.device, weights_only=False)
-
         if isinstance(checkpoint, dict) and "model_state_dict" in checkpoint:
             state_dict = checkpoint["model_state_dict"]
         else:
@@ -94,6 +126,12 @@ class TreeSpeciesPredictor:
 
     def _preprocess_path(self, image_path: str) -> torch.Tensor:
         """Load and preprocess an image from file path."""
+        if self._pilot_model:
+            image = cv2.imread(image_path)
+            if image is None:
+                raise ValueError(f"Could not read image: {image_path}")
+            return self._preprocess_array(image)
+
         img = Image.open(image_path).convert("RGB")
         return self.transforms(img).unsqueeze(0)
 
@@ -105,6 +143,9 @@ class TreeSpeciesPredictor:
             image = cv2.cvtColor(image, cv2.COLOR_BGRA2RGB)
         elif image.shape[2] == 3:
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        if self._pilot_model:
+            return self.transforms(image=image)["image"].unsqueeze(0)
+
         img = Image.fromarray(image)
         return self.transforms(img).unsqueeze(0)
 
@@ -146,7 +187,7 @@ class TreeSpeciesPredictor:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--checkpoint", type=str,
-                        default="outputs_pilot/checkpoints/best_13_species_model.pt")
+                        default="outputs_pilot/checkpoints/best.pt")
     parser.add_argument("--image", type=str, required=True)
     parser.add_argument("--top_k", type=int, default=1)
     parser.add_argument("--device", type=str, default=None)

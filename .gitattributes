@@ -1,0 +1,4 @@
+module1_species_classification/tree_species_classifier/outputs_pilot/checkpoints/best.pt filter=lfs diff=lfs merge=lfs -text
+module2_health_classification/tree_health_classifier/outputs/checkpoints/best.pt filter=lfs diff=lfs merge=lfs -text
+module3_tree_detection/tree_detection/outputs/checkpoints/best.pt filter=lfs diff=lfs merge=lfs -text
+module4_tree_segmentation/tree_segmentation/outputs/checkpoints/best_fp16.pt filter=lfs diff=lfs merge=lfs -text

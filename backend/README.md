@@ -12,13 +12,10 @@ Production-ready FastAPI backend designed to orchestrate the 7 separate AI Modul
 - `POST /api/v1/analyze` : Multipart form upload requiring `full_tree_image` and `closeup_image`. Returns unified JSON response linked to S3/Local PDF outputs.
 
 ## Setup & Execution
-Create a virtual environment and start the development server:
+From the repository root on Windows, run `.\setup_windows.ps1` first. It installs the backend dependencies and prepares the local environment file. Then start the development server from this directory:
 
-```bash
-python -m venv venv
-source venv/Scripts/activate
-pip install -r requirements.txt
-
-uvicorn app.main:app --reload
+```powershell
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
+
 Navigate to `http://localhost:8000/docs` to view the comprehensive API contract swagger page.

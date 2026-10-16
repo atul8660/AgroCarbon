@@ -31,12 +31,12 @@ except ImportError as _e:
 
 
 class Module1Adapter:
-    """Tree Species Classification API Envelope — 13-species EfficientNet-B3 model"""
+    """Tree species classification adapter for the available Mango/Neem pilot model."""
 
     # Checkpoint location (relative to project root)
     _CHECKPOINT_REL = os.path.join(
         "module1_species_classification", "tree_species_classifier",
-        "outputs_pilot", "checkpoints", "best_13_species_model.pt"
+        "outputs_pilot", "checkpoints", "best.pt"
     )
 
     # Fallback class names if checkpoint doesn't embed label_map
@@ -67,7 +67,7 @@ class Module1Adapter:
                     checkpoint_path=checkpoint_path, device="cpu"
                 )
                 self._logger.info(
-                    f"Module1: Loaded 13-species EfficientNet-B3 from {checkpoint_path}"
+                    f"Module1: Loaded species classifier from {checkpoint_path}"
                 )
             except Exception as e:
                 self._logger.warning(f"Module1: Failed to load real model: {e}. Using mock.")
@@ -243,7 +243,7 @@ class Module4Adapter:
     
     _CHECKPOINT_REL = os.path.join(
         "module4_tree_segmentation", "tree_segmentation",
-        "outputs", "checkpoints", "best.pt"
+        "outputs", "checkpoints", "best_fp16.pt"
     )
 
     def __init__(self):

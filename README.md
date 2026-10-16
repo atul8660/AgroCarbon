@@ -2,6 +2,37 @@
 
 This repository consolidates four independent, specialized Python modules to construct a multi-stage AI pipeline for tree detection, segmentation, and classification, which serves as the core engine for high-integrity tree-by-tree carbon credit estimation.
 
+## Quick start (Windows)
+
+The repository uses Git LFS for the trained model checkpoints. Install Git LFS before cloning so the checkpoint files are downloaded rather than left as small pointer files. The required checkpoints total about 450 MB. Module 1 uses the available two-species Mango/Neem pilot checkpoint; the current Module 5 biomass formula does not support Neem, so Neem analyses report that biomass is unavailable.
+
+```powershell
+git lfs install
+git clone https://github.com/atul8660/AgroCarbon.git
+cd AgroCarbon
+.\setup_windows.ps1
+```
+
+The setup script requires Python 3.11 or newer and Flutter stable. It creates a backend virtual environment, installs the backend and inference dependencies, creates a private `backend\.env` with a random local JWT secret if one does not exist, downloads the LFS checkpoints, and runs `flutter pub get`.
+
+Open two PowerShell terminals in the repository:
+
+```powershell
+# Terminal 1: start the backend and wait for model loading to finish
+cd backend
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+```powershell
+# Terminal 2: run the app in Chrome
+cd agrocarbon_app
+flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:8000/api/v1
+```
+
+For an Android emulator, use `flutter run` and the app's default `http://10.0.2.2:8000/api/v1` API address. For a physical device, use the computer's LAN IP in `API_BASE_URL` and allow port 8000 through the local firewall.
+
+The model checkpoints require several gigabytes of free storage and RAM; inference speed depends on the machine's CPU/GPU. The AWS credentials in `backend\.env.example` are placeholders, so image/report storage falls back to local files unless real S3 credentials are configured. Never commit `backend\.env`.
+
 ---
 
 ## 1. Pipeline Architecture & Data Flow

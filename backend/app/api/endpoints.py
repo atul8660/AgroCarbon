@@ -48,15 +48,7 @@ async def analyze_tree(
         ft_url = storage.upload_full_tree(full_tree_bytes, full_tree_image.filename)
         cu_url = storage.upload_closeup(closeup_bytes, closeup_image.filename)
         
-        # 3. Run AI pipeline — pass bytes directly to avoid UploadFile double-read
-        # DEBUG
-        tree_bytes = await full_tree_image.read()
-        leaf_bytes = await closeup_image.read()
-        with open("debug_received_tree.jpg", "wb") as f: f.write(tree_bytes)
-        with open("debug_received_leaf.jpg", "wb") as f: f.write(leaf_bytes)
-        await full_tree_image.seek(0)
-        await closeup_image.seek(0)
-        
+        # 3. Run AI pipeline using the already-validated bytes.
         result = await pipeline.run_pipeline(
             full_tree_bytes=full_tree_bytes,
             closeup_bytes=closeup_bytes,
@@ -157,4 +149,3 @@ async def delete_prediction(prediction_id: int, db: Session = Depends(get_db), c
 async def delete_prediction_plural(prediction_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """Alias for delete_prediction to match the Flutter frontend's plural endpoint structure."""
     return await delete_prediction(prediction_id, db, current_user)
-

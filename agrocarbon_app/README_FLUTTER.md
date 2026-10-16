@@ -20,10 +20,21 @@ Production-Ready Structural Frontend Layer implementing SOLID architectural prin
 - **Secure Storage (`flutter_secure_storage`)**: Isolates authentication JWT payloads onto Hardware Keystores (Android Keystore / iOS Keychain).
 
 ## Executing Code
-1. Install Flutter (stable).
-2. Start an Android Virtual Device via Android Studio or plug a device locally.
-3. Run: `flutter pub get`
-4. Run: `flutter run`
+For a fresh Windows clone, run `.\setup_windows.ps1` from the repository root. This fetches model checkpoints, installs backend dependencies, and runs `flutter pub get`.
+
+Start the backend from the repository's `backend` directory:
+
+```powershell
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+Then start the Flutter app from this directory:
+
+```powershell
+flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:8000/api/v1
+```
+
+For an Android emulator, use `flutter run`; its default API URL is `http://10.0.2.2:8000/api/v1`. For a physical device, pass the computer's LAN IP using `--dart-define=API_BASE_URL=http://<LAN-IP>:8000/api/v1`.
 
 ## Backend Connections
 Ensure the Python backend is actively hosted via `uvicorn app.main:app`.
